@@ -26,7 +26,11 @@ export interface StaticsI {
 }
 
 /* --> the type of the Instance of this Model. Its generics are interfaces that are defined in this file */
-export type UsersInstance = NeogmaInstance<UserPropertiesI, object, MethodsI>;
+export type UsersInstance = NeogmaInstance<
+  UserPropertiesI,
+  UsersRelatedNodesI,
+  MethodsI
+>;
 
 export interface UsersRelatedNodesI {
   orders: ModelRelatedNodesI<
