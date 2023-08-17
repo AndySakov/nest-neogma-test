@@ -2,7 +2,6 @@ import { ModelFactory, Neogma, NeogmaInstance, NeogmaModel } from "neogma";
 
 /* --> the interface of the properties of the Instance (properties of the node). They match the schema definition */
 type OrderPropertiesI = {
-  name: string;
   orderNumber?: number;
   id: string;
 };
@@ -35,11 +34,6 @@ export const Orders = (
       label: "Order",
       /* --> The properties of the nodes of this Model and the validation for them. This follows the revalidator schema configuration */
       schema: {
-        name: {
-          type: "string",
-          minLength: 3,
-          required: true,
-        },
         orderNumber: {
           type: "number",
           minimum: 0,
@@ -61,7 +55,7 @@ export const Orders = (
       methods: {
         bar: function () {
           /* --> returns the name of this node with a friendly text */
-          return "The name of this Order is: " + this.name;
+          return "The number of this Order is: " + this.orderNumber;
         },
       },
     },

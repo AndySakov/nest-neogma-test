@@ -38,12 +38,12 @@ export class PublicService {
         properties: [
           {
             id: "3",
-            items: 5,
+            orderNumber: 10,
             Rating: 4,
           },
         ],
       },
     });
-    return this.models.Users.findMany();
+    return userWithOrder;
   }
 }

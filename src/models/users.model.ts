@@ -1,5 +1,11 @@
-import { ModelFactory, Neogma, NeogmaInstance, NeogmaModel } from "neogma";
-import { Orders } from "./orders.model";
+import {
+  ModelFactory,
+  ModelRelatedNodesI,
+  Neogma,
+  NeogmaInstance,
+  NeogmaModel,
+} from "neogma";
+import { Orders, OrdersInstance } from "./orders.model";
 
 /* --> the interface of the properties of the Instance (properties of the node). They match the schema definition */
 type UserPropertiesI = {
@@ -22,12 +28,31 @@ export interface StaticsI {
 /* --> the type of the Instance of this Model. Its generics are interfaces that are defined in this file */
 export type UsersInstance = NeogmaInstance<UserPropertiesI, object, MethodsI>;
 
+export interface UsersRelatedNodesI {
+  orders: ModelRelatedNodesI<
+    /* --> the related Model */
+    ReturnType<
+      typeof Orders
+    > /* --> when refering to the same Model that is currently being defined, this line must be replaced with `{ createOne: typeof Orders["createOne"] }` */,
+    /* --> the type of the Instance of the related Model. It should have a definition to correspond to `UsersInstance`, as defined below */
+    OrdersInstance,
+    /* --> (optional) the interface of the relationship properties, which will be used while creating the relationship. The keys are the aliases to be used to indicate that the property refers to a relationship property */
+    {
+      Rating: number;
+    },
+    /* --> (optional) the interface of the relationship properties, as they are in the database. The keys are the actual property names */
+    {
+      rating: number;
+    }
+  >;
+}
+
 export const Users = (
   neogma: Neogma,
-): NeogmaModel<UserPropertiesI, object, MethodsI, StaticsI> => {
-  const Users = ModelFactory<
+): NeogmaModel<UserPropertiesI, UsersRelatedNodesI, MethodsI, StaticsI> =>
+  ModelFactory<
     UserPropertiesI,
-    object,
+    UsersRelatedNodesI,
     StaticsI, // --> optional, needed only if they are defined
     MethodsI // --> optional, needed only if they are defined
   >(
@@ -50,6 +75,29 @@ export const Users = (
           required: true,
         },
       },
+      relationships: {
+        /* --> an arbitrary alias to be used for identifying this relationship when using the relationship-related functions */
+        orders: {
+          /* --> reference to the Orders Model. For reference to this model, the value 'self' can be used */
+          model: Orders(neogma),
+          /* --> the direction of the relationship. Valid values are 'in' | 'out' | 'none' */
+          direction: "out",
+          /* --> the name of this relationship */
+          name: "CREATES",
+          /* --> properties of the relationship between the nodes */
+          properties: {
+            /* --> the key to be used that the property is a relationship property */
+            Rating: {
+              /* --> the actual property to be created in the relationship */
+              property: "rating",
+              /* --> schema validation for it */
+              schema: {
+                type: "number",
+              },
+            },
+          },
+        },
+      },
       /* --> (optional) the key to be used as a unique identifier, which enables some Instance methods */
       primaryKeyField: "id",
       /* --> (optional) statics to be added to the Model. In this example, can be called using `Users.foo()` */
@@ -67,32 +115,4 @@ export const Users = (
       },
     },
     neogma,
-  ); // <-- the neogma instance is used
-  Users.addRelationships(
-    {
-      /* --> an arbitrary alias to be used for identifying this relationship when using the relationship-related functions */
-      orders: {
-        /* --> reference to the Orders Model. For reference to this model, the value 'self' can be used */
-        model: Orders(neogma),
-        /* --> the direction of the relationship. Valid values are 'in' | 'out' | 'none' */
-        direction: "out",
-        /* --> the name of this relationship */
-        name: "CREATES",
-        /* --> properties of the relationship between the nodes */
-        properties: {
-          /* --> the key to be used that the property is a relationship property */
-          Rating: {
-            /* --> the actual property to be created in the relationship */
-            property: "rating",
-            /* --> schema validation for it */
-            schema: {
-              type: "number",
-            },
-          },
-        },
-      },
-    },
-    /* --> (optional) the key to be used as a unique identifier, which enables some Instance methods */
   );
-  return Users;
-};
