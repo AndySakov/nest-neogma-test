@@ -73,6 +73,7 @@ export const Users = (
         age: {
           type: "number",
           minimum: 0,
+          required: false,
         },
         id: {
           type: "string",
@@ -97,6 +98,7 @@ export const Users = (
               /* --> schema validation for it */
               schema: {
                 type: "number",
+                required: false,
               },
             },
           },

@@ -37,6 +37,7 @@ export const Orders = (
         orderNumber: {
           type: "number",
           minimum: 0,
+          required: true,
         },
         id: {
           type: "string",
